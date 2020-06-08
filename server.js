@@ -45,46 +45,42 @@ client.on('message', (channel, tags, message, self) => {
 
     
     if(message.toLowerCase().includes('!bet')) {
-        
-        if (apostas.length == 0){
-            aposta.isRealizada = false;
-            aposta.username = tags.username;
-            aposta.cavalo = 0;
-            aposta.valor = 0;
-            apostas.push(aposta);
-        }
-        
-        apostas.forEach(element => {
-            if (element.username == tags.username && element.isRealizada) {
-                //Ja tem uma aposta registrada
-            } else {                
-                while (isPlaying && !element.isRealizada) {
 
-                    if (message === '!bet') {
-                        client.say(channel, `@${tags.username}, aposta não registrada faltou informar qual cavalo e o valor que deseja apostar.`);
-                    }
+        aposta.isRealizada = false;
+        aposta.username = tags.username;
+        aposta.cavalo = 0;
+        aposta.valor = 0;
         
-                    // tentativaAposta = message.split(' ')[1];
-                    element.cavalo = message.split(' ')[1].split(':')[0];
-                    element.valor  = message.split(' ')[1].split(':')[1];
-                    
-                    if (element.cavalo == ' ' && element.cavalo == undefined ){
-                        client.say(channel, `@${tags.username}, aposta não registrada faltou informar qual cavalo quer apostar.`);
-                        return;
-                    }
-        
-                    //Verifica se o valor é compativel com os pontos que ele tem no banco.
-                    if (element.valor == '' && element.valor == undefined){
-                        client.say(channel, `@${tags.username}, aposta não registrada faltou informar qual valor quer apostar.`);
-                        return;
-                    }
-        
-                    element.isRealizada = true;
-                    client.say(channel, `@${tags.username}, registrada aposta de @${valor} no cavalo @${cavalo}`);
-                    return;
-                }   
-                client.say(channel, 'Não é possível fazer apostas nesse momento. Aguarde o próximo páreo.');
+        if (isPlaying) {
+
+            if (message === '!bet') {
+                client.say(channel, `@${tags.username}, aposta não registrada faltou informar qual cavalo e o valor que deseja apostar.`);
+                return;
             }
-        });
+
+            // tentativaAposta = message.split(' ')[1];
+            aposta.cavalo = message.split(' ')[1].split(':')[0];
+            aposta.valor  = message.split(' ')[1].split(':')[1];
+            
+            if (aposta.cavalo == ' ' && aposta.cavalo == undefined ){
+                client.say(channel, `@${tags.username}, aposta não registrada faltou informar qual cavalo quer apostar.`);
+                return;
+            }
+
+            //Verifica se o valor é compativel com os pontos que ele tem no banco.
+            if (aposta.valor == '' && aposta.valor == undefined){
+                client.say(channel, `@${tags.username}, aposta não registrada faltou informar qual valor quer apostar.`);
+                return;
+            }
+
+            aposta.isRealizada = true;
+            //gravar no banco
+            client.say(channel, `@${tags.username}, registrada aposta de @${valor} no cavalo @${cavalo}`);
+            return;
+
+        } else {
+            client.say(channel, 'Não é possível fazer apostas nesse momento. Aguarde o próximo páreo.');
+            return;
+        }
     }
 });
